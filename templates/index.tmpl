@@ -1,0 +1,17 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ .title }}</title>
+	<link rel="icon" type="image/png" href="https://go.dev/favicon.ico" sizes="16x16" />
+</head>
+<body>
+	<p align="center">
+  		<a href="/swagger/index.html"><img src="public/assets/images/macgover.png" /></a>
+	</p>
+	<center>
+		<h1>Welcome to Macgover from {{ .hostname }}</h1>
+		<h3>{{ .commit }}</h>
+	</center>
+</body>
+</html>

@@ -1,0 +1,5 @@
+.minikube
+.env
+docs
+mycommand.txt
+.private

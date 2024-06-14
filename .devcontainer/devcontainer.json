@@ -1,0 +1,26 @@
+// Read:
+// https://betterprogramming.pub/a-complete-go-development-environment-with-docker-and-vscode-a3e4410d27f7
+// https://code.visualstudio.com/docs/remote/devcontainerjson-reference
+{
+    "dockerFile": "Dockerfile",
+    "appPort": [
+        "3000:3000"
+    ],
+    "extensions": [
+        "golang.go"
+    ],
+    "settings": {
+        "go.useLanguageServer": true,
+        "editor.defaultFormatter": "golang.go",
+        "editor.formatOnSave": true
+    },
+    "postCreateCommand": "go mod download ; go mod tidy",
+    "runArgs": [
+        "--name",
+        "macgover--golangEnvironment",
+        "-u",
+        "vscode",
+        // "-v", "${env:HOME}/.ssh:/home/vscode/.ssh:ro",
+        // "-v", "${env:HOME}/.gitconfig:/home/vscode/.gitconfig:ro"
+    ]
+}
