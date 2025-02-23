@@ -3,11 +3,11 @@ name:  Publish Image # Nom du workflow
 on:
   push:
     tags:
-      - '*'
+      - '[0-9]+.[0-9]+.[0-9]'
+      - '[0-9]+.[0-9]+.[0-9]+rc[0-9]+'
 
 jobs:
   build:  # Nom du job
-    if: ${{ github.ref_type == 'tag' && github.ref_name =~ /^[0-9]{4}\.[0-9]{2}\.[0-9]{1}$/ }}
     runs-on: ubuntu-latest
 
     steps:
