@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net"
@@ -20,15 +21,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	getenvs "gitlab.com/avarf/getenvs"
 
-	// doc api swagger : https://github.com/swaggo/swag
-	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	docs "github.com/me-jls/macgover/docs"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
-//fake
 
-//go:embed assets/* templates/*
-var fs embed.FS
+
+//go:embed assets/* templates/* docs/*
+var embeddedFS embed.FS
 
 // ---- swagger Informations
 // @title Macgover
@@ -62,7 +61,9 @@ func init() {
 
 func updateTitleSwagger(c *ginSwagger.Config) {
 	c.Title = "Macgover"
+	c.URL = "/swagger/swagger.json"
 }
+
 
 func main() {
 	log.Println("------------------------ Start MACGOVER ------------------------")
@@ -76,22 +77,24 @@ func main() {
 
 		router := gin.Default()
 
-		//router.LoadHTMLGlob("templates/*.html.tmpl")
-		//router.LoadHTMLFiles("templates/index.html.tmpl")
-		tmpl := template.Must(template.New("").ParseFS(fs, "templates/*.tmpl"))
+		tmpl := template.Must(template.New("").ParseFS(embeddedFS, "templates/*.tmpl"))
 		router.SetHTMLTemplate(tmpl)
 
 		router.GET("/", redirectIndex)
+		router.GET("/macgover", macgoverHandler)
 
-		docs.SwaggerInfo.BasePath = "/"
-		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, updateTitleSwagger))
 
-		//router.Static("/images", "./images")
-		router.StaticFS("/public", http.FS(fs))
+		//swaggerHandler := http.FileServer(http.FS(fs))
+		docsFS, _ := fs.Sub(embeddedFS, "docs")
+		swaggerHandler := http.FileServer(http.FS(docsFS))
+		router.GET("/swagger/*any", gin.WrapH(http.StripPrefix("/swagger/", swaggerHandler)))
+		
+		router.GET("/swagger-ui/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, updateTitleSwagger))
+
+		imageFS, _ := fs.Sub(embeddedFS, "assets")
+		router.StaticFS("/public", http.FS(imageFS))
 
 		router.Static("/favicon.ico", "https://go.dev/favicon.ico")
-
-		router.GET("/macgover", macgoverHandler)
 
 		v1 := router.Group("/v1")
 		{

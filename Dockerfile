@@ -1,14 +1,17 @@
 ############################
 # STEP 1 build executable binary
 ############################
-FROM golang:1.17-alpine AS builder
+FROM golang:1.22-alpine AS builder
 ADD go.mod go.sum main.go jwt.go ldap.go database.go /app/
 ADD assets /app/assets/
 ADD templates /app/templates
 WORKDIR /app
 RUN ls -l /app/
-RUN go get -u github.com/swaggo/swag/cmd/swag
+#install swag
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+#generate docs/* files
 RUN swag init
+#build binary
 RUN go build -o main .
 
 #############################
