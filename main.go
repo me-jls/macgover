@@ -94,8 +94,6 @@ func main() {
 		imageFS, _ := fs.Sub(embeddedFS, "assets")
 		router.StaticFS("/public", http.FS(imageFS))
 
-		router.Static("/favicon.ico", "https://go.dev/favicon.ico")
-
 		v1 := router.Group("/v1")
 		{
 			v1.GET("/whoami", whoamiHandler)

@@ -8,9 +8,6 @@
 </h1>
 </center>
 
-## Informations: 
-- Location: https://gallery.ecr.aws/n3v7f6o4/macgover
-- Version: public.ecr.aws/n3v7f6o4/macgover:22.09
 
 ## Usage
 
